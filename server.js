@@ -3,11 +3,12 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
+const { fork } = require("child_process");
 
 const app = express();
 const server = http.createServer(app);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const APPSTATE_PATH = path.join(__dirname, "appstate.json");
 const LOGS_PATH = path.join(__dirname, "logs.json");
 const MENUS_PATH = path.join(__dirname, "menus.json");
@@ -32,22 +33,10 @@ if (fs.existsSync(LOGS_PATH)) {
 
 function getDefaultMenus() {
   return {
-    menu1: {
-      title: "📋 قائمة الاوامر 1",
-      commands: "/مساعدة - مساعدة\n/معلومات - معلومات\n/بينغ - اختبار\n/هلا - ترحيب\n/وقت - الوقت"
-    },
-    menu2: {
-      title: "🔥 قائمة الاوامر 2",
-      commands: "/العاب - الألعاب\n/زهر - نرد\n/عشوائي - رقم عشوائي\n/تخمين - تخمين عدد\n/مسابقة - مسابقة"
-    },
-    menu3: {
-      title: "⚙️ قائمة الاوامر 3",
-      commands: "/مشرف - مشرفون\n/كتم - كتم عضو\n/طرد - طرد عضو\n/ترحيب - رسالة ترحيب\n/قواعد - قواعد المجموعة"
-    },
-    menu4: {
-      title: "💫 قائمة الاوامر 4",
-      commands: "/طقس - حالة الطقس\n/ترجمة - ترجمة نص\n/بحث - بحث في غوغل\n/صورة - صورة عشوائية\n/نكتة - نكتة مضحكة"
-    }
+    menu1: { title: "📋 قائمة الاوامر 1", commands: "/مساعدة - مساعدة\n/معلومات - معلومات\n/بينغ - اختبار\n/هلا - ترحيب\n/وقت - الوقت" },
+    menu2: { title: "🔥 قائمة الاوامر 2", commands: "/العاب - الألعاب\n/زهر - نرد\n/عشوائي - رقم عشوائي\n/تخمين - تخمين عدد\n/مسابقة - مسابقة" },
+    menu3: { title: "⚙️ قائمة الاوامر 3", commands: "/مشرف - مشرفون\n/كتم - كتم عضو\n/طرد - طرد عضو\n/ترحيب - رسالة ترحيب\n/قواعد - قواعد المجموعة" },
+    menu4: { title: "💫 قائمة الاوامر 4", commands: "/طقس - حالة الطقس\n/ترجمة - ترجمة نص\n/بحث - بحث في غوغل\n/صورة - صورة عشوائية\n/نكتة - نكتة مضحكة" }
   };
 }
 
@@ -59,11 +48,7 @@ function loadMenus() {
 }
 
 app.get("/api/status", (req, res) => {
-  res.json({
-    status: botStatus,
-    hasCookies: fs.existsSync(APPSTATE_PATH),
-    uptime: process.uptime()
-  });
+  res.json({ status: botStatus, hasCookies: fs.existsSync(APPSTATE_PATH), uptime: process.uptime() });
 });
 
 app.get("/api/logs", (req, res) => {
@@ -109,27 +94,17 @@ app.post("/api/bot/start", (req, res) => {
   if (botStatus === "online") {
     return res.json({ ok: true, message: "البوت يعمل بالفعل" });
   }
-
   try {
-    const { fork } = require("child_process");
     botProcess = fork(path.join(__dirname, "index.js"), [], {
       env: { ...process.env },
       silent: true
     });
-
-    botProcess.stdout.on("data", (data) => {
-      addLog("info", data.toString().trim());
-    });
-
-    botProcess.stderr.on("data", (data) => {
-      addLog("error", data.toString().trim());
-    });
-
+    botProcess.stdout.on("data", (data) => addLog("info", data.toString().trim()));
+    botProcess.stderr.on("data", (data) => addLog("error", data.toString().trim()));
     botProcess.on("exit", (code) => {
       botStatus = "offline";
       addLog("warning", `⚠️ البوت توقف (كود: ${code})`);
     });
-
     botStatus = "online";
     addLog("success", "🚀 تم تشغيل البوت");
     res.json({ ok: true });
@@ -140,10 +115,7 @@ app.post("/api/bot/start", (req, res) => {
 });
 
 app.post("/api/bot/stop", (req, res) => {
-  if (botProcess) {
-    botProcess.kill("SIGTERM");
-    botProcess = null;
-  }
+  if (botProcess) { botProcess.kill("SIGTERM"); botProcess = null; }
   botStatus = "offline";
   addLog("warning", "🛑 تم إيقاف البوت");
   res.json({ ok: true });
@@ -151,5 +123,5 @@ app.post("/api/bot/stop", (req, res) => {
 
 server.listen(PORT, "0.0.0.0", () => {
   addLog("info", `🌐 لوحة التحكم تعمل على المنفذ ${PORT}`);
-  console.log(`✅ Dashboard running on port ${PORT}`);
+  console.log(`✅ KANEKI-BOT Dashboard running on port ${PORT}`);
 });
