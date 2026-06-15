@@ -1,0 +1,18 @@
+{
+  "name": "kaneki-botv2",
+  "version": "2.0.0",
+  "description": "KANEKI BOT v2 - Facebook Messenger Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "fca-unofficial": "^1.9.7",
+    "node-cron": "^3.0.3",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
