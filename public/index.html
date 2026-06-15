@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KANEKI BOT v2 — لوحة التحكم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-particles" id="particles"></div>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="18" stroke="#e53e3e" stroke-width="2" fill="none"/>
+            <circle cx="20" cy="20" r="8" fill="#e53e3e" opacity="0.8"/>
+            <path d="M20 4 L20 8 M20 32 L20 36 M4 20 L8 20 M32 20 L36 20" stroke="#e53e3e" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>KANEKI BOT <span class="version">v2</span></h1>
+          <p class="subtitle">لوحة التحكم</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <div class="status-badge" id="statusBadge">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">جاري التحميل...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="cards-row">
+      <div class="card stat-card">
+        <div class="stat-icon red"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+        <div class="stat-info">
+          <span class="stat-label">حالة البوت</span>
+          <span class="stat-value" id="statStatus">—</span>
+        </div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg></div>
+        <div class="stat-info">
+          <span class="stat-label">الكوكيز</span>
+          <span class="stat-value" id="statCookies">—</span>
+        </div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/></svg></div>
+        <div class="stat-info">
+          <span class="stat-label">وقت التشغيل</span>
+          <span class="stat-value" id="statUptime">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="left-col">
+        <div class="card">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+            <h2>الكوكيز (AppState)</h2>
+          </div>
+          <div class="card-body">
+            <p class="hint">الصق محتوى ملف <code>appstate.json</code> من تطبيق استخراج الكوكيز</p>
+            <textarea id="cookiesInput" placeholder='[{"key":"...", "value":"..."}]' rows="6"></textarea>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="uploadCookies()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+                رفع الكوكيز
+              </button>
+              <button class="btn btn-danger-outline" onclick="deleteCookies()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                حذف
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <h2>التحكم في البوت</h2>
+          </div>
+          <div class="card-body">
+            <div class="btn-group centered">
+              <button class="btn btn-success btn-lg" id="startBtn" onclick="startBot()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                تشغيل البوت
+              </button>
+              <button class="btn btn-danger btn-lg" id="stopBtn" onclick="stopBot()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
+                إيقاف البوت
+              </button>
+            </div>
+            <div class="cookie-refresh-info">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+              تحديث الكوكيز تلقائياً كل ساعة
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="card menus-card">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+            <h2>قوائم الأوامر</h2>
+            <button class="btn btn-primary btn-sm" onclick="saveMenus()" style="margin-right:auto">حفظ التغييرات</button>
+          </div>
+          <div class="menus-tabs">
+            <button class="tab-btn active" onclick="switchTab(1, this)">قائمة 1</button>
+            <button class="tab-btn" onclick="switchTab(2, this)">قائمة 2</button>
+            <button class="tab-btn" onclick="switchTab(3, this)">قائمة 3</button>
+            <button class="tab-btn" onclick="switchTab(4, this)">قائمة 4</button>
+          </div>
+          <div class="card-body">
+            <div class="menu-panel active" id="panel1">
+              <label>عنوان القائمة</label>
+              <input type="text" id="title1" class="text-input" placeholder="📋 قائمة الاوامر 1" />
+              <label>الأوامر (سطر لكل أمر)</label>
+              <textarea id="cmds1" rows="8" placeholder="/أمر - وصف الأمر"></textarea>
+            </div>
+            <div class="menu-panel" id="panel2">
+              <label>عنوان القائمة</label>
+              <input type="text" id="title2" class="text-input" placeholder="🔥 قائمة الاوامر 2" />
+              <label>الأوامر (سطر لكل أمر)</label>
+              <textarea id="cmds2" rows="8" placeholder="/أمر - وصف الأمر"></textarea>
+            </div>
+            <div class="menu-panel" id="panel3">
+              <label>عنوان القائمة</label>
+              <input type="text" id="title3" class="text-input" placeholder="⚙️ قائمة الاوامر 3" />
+              <label>الأوامر (سطر لكل أمر)</label>
+              <textarea id="cmds3" rows="8" placeholder="/أمر - وصف الأمر"></textarea>
+            </div>
+            <div class="menu-panel" id="panel4">
+              <label>عنوان القائمة</label>
+              <input type="text" id="title4" class="text-input" placeholder="💫 قائمة الاوامر 4" />
+              <label>الأوامر (سطر لكل أمر)</label>
+              <textarea id="cmds4" rows="8" placeholder="/أمر - وصف الأمر"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card logs-card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        <h2>سجل الأحداث</h2>
+        <button class="btn btn-ghost btn-sm" onclick="clearLogs()" style="margin-right:auto">مسح</button>
+      </div>
+      <div class="logs-container" id="logsContainer">
+        <div class="log-empty">لا توجد أحداث بعد...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
